@@ -1,875 +1,369 @@
 <!DOCTYPE html>
 <html>
+ 
 <head>
-    <link rel="stylesheet" href="style.css">
+  <title>Rando App</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <style>
+	body {
+	  background: #2D3142;
+	  font-family: 'Raleway', sans-serif;
+	}
+    h1 {
+      font-family: sans-serif;
+      font-size: 45px;
+      color: white;
+      padding: 5px;
+      margin: 15px;
+    }
+    /*#dynamic-list{*/
+    ul{
+      padding: 5px;
+      margin: 10px;
+      border-radius: 4px;
+    }
+    #candidate {
+      padding: 5px;
+      padding-left: 10px;
+      padding-right: 20px;
+      margin: 10px;
+      margin-left: 20px;
+      border-radius: 4px;
+    }
+    .members {
+      //font-family: sans-serif;
+      //background-color:gold;
+      float: left;
+      //clear: both;
+      //padding: 5px;
+      list-style-type: none;
+      margin: 10px;
+      border-radius: 5px;
+    }
+    .Sequence, .OwnRev {
+      //font-family: sans-serif;
+      //background-color:gold;
+      //float: left;
+      //clear: both;
+      //padding: 5px;
+      //list-style-type: none;
+      margin: 10px;
+      border-radius: 5px;
+    }
+    #addItemBut, #removeItemBut {
+    	font-family: sans-serif;
+    	font-size: 15px;
+    	margin: 10px;
+    	border-radius: 5px;
+    	padding: 7px;
+    	cursor:pointer;
+    }
+    /* Layout Styling */
+	
+	#Random1, #RandomSeq, #RandomOR {
+		margin-left: 20px;
+		background: gold;
+		border-radius: 5px;
+		font-weight: bold;
+		font-size: 20px;
+		padding: 5px;
+		cursor:pointer;
+	}
+	#luckyText {
+		font-size: 20px;
+		font-weight: bold;
+		margin-left: 20px;
+		padding: 5px;
+		color: white;
+	}
+	#lucky {
+		font-size: 20px;
+		font-weight: bold;
+		margin-left: 20px;
+		padding: 5px;
+		color: black;
+	}
+    
+  </style>
+  <script>
+  	function addItem(){
+		var ul = document.getElementById("dynamic-list");
+		var candidate = document.getElementById("candidate");
+		if (candidate.value != ""){
+			var liButton = document.createElement("input");
+			liButton.setAttribute('id',candidate.value+"!");
+			liButton.setAttribute('type','button');
+			liButton.setAttribute('value',candidate.value);
+			liButton.setAttribute('onclick',"removeItem(this)");
+			liButton.style.background = "gold";
+			liButton.style.borderColor = "gold";
+			liButton.style.padding = "5px";
+			liButton.style.cursor = "pointer";
+			liButton.style.font = "normal bold 20px Lucida Console,Courier,monospace"
+		  
+			var li = document.createElement("li");
+			li.setAttribute('id',candidate.value);
+			li.setAttribute('class',"members");
+			//li.appendChild(document.createTextNode(candidate.value));
+			li.appendChild(liButton);
+			ul.appendChild(li);
+			toppings.push(candidate.value);
+			candidate.value = '';
+		}
+	}
+	
+	function removeItemButt(){
+		var ul = document.getElementById("dynamic-list");
+		var candidate = document.getElementById("candidate");
+		if(candidate.value){
+			var item = document.getElementById(candidate.value);
+			ul.removeChild(item);
+			for (var i = 0; i < toppings.length; i++) {
+				if(candidate.value==toppings[i]){
+					// delete toppings[i];
+					toppings.splice(i, 1); 
+					candidate.value = '';
+					break;
+				}
+			}
+		}
+		//var oRemButton = document.getElementById("candidate");
+		
+	}
+	
+	function removeItem(elem){
+		//alert(elem.value);
+		var remButton = document.getElementById(elem.value+"!");
+		if(remButton.style.background == "grey"){
+			//Add the member
+			remButton.style.background = "gold";
+			toppings.push(elem.value);
+		}else if (remButton.style.background == "gold"){
+			//Remove the member
+			remButton.style.background = "grey";
+			for (var i = 0; i < toppings.length; i++) {
+				if(elem.value==toppings[i]){
+					toppings.splice(i, 1); 
+					break;
+				}
+			}
+		}
+		
+	}
+	
+	function Random1Fun(){
+		$("#lucky").fadeOut(1000,function(){
+			var luckyNo = Math.floor(Math.random() * toppings.length);
+			var lucky = document.getElementById("lucky");
+			lucky.value = toppings[luckyNo];
+			$("#lucky").fadeIn(1000);
+		});
+		// //$("#lucky").fadeOut(3000);
+		// var luckyNo = Math.floor(Math.random() * toppings.length);
+		// var lucky = document.getElementById("lucky");
+		// lucky.value = toppings[luckyNo];
+		// //$("#lucky").fadeIn(3000);
+	}
+	
+	function RandomSeq(){
+		var ol = document.getElementById("randomSeqList");
+		// As long as <ul> has a child node, remove it
+		while (ol.hasChildNodes()) {  
+			ol.removeChild(ol.firstChild);
+		}
+		var finalSeq = [];
+		for (var i = 0; i < toppings.length; i++) {
+			var ranNum = Math.floor(Math.random() * toppings.length);
+			var topping = toppings[ranNum];
+			while (finalSeq.indexOf(topping) != "-1"){
+				ranNum = Math.floor(Math.random() * toppings.length);
+				topping = toppings[ranNum];
+				if (finalSeq.indexOf(topping) == "-1"){
+					break;
+				}
+			}
+			finalSeq.push(topping);
+		  
+			var listItem = document.createElement("li");
+			listItem.setAttribute('id',topping+"~");
+			listItem.setAttribute('class',"Sequence");
+			listItem.style.color = "white";
+			listItem.appendChild(document.createTextNode(topping));
+			listItem.textContent = topping;
+			ol.appendChild(listItem);
+			// numItems = numItems - 1;
+		}
+	}
+	
+	function RandomORFun(){
+		var orList = document.getElementById("randomORList");
+		// As long as <ul> has a child node, remove it
+		while (orList.hasChildNodes()) {  
+			orList.removeChild(orList.firstChild);
+		}
+		var reviewer = [...toppings];
+		var owner	= [...toppings];
+		var numItems = toppings.length;
+		for (var i = 0; i < toppings.length; i++) {
+			var ranNum = Math.floor(Math.random() * numItems);
+			while (owner[i] == reviewer[ranNum]){
+				ranNum = Math.floor(Math.random() * numItems);
+				if (owner[i] != reviewer[ranNum]){
+					break;
+				}
+			}
+			var listItem = document.createElement("li");
+			listItem.setAttribute('id',owner[i]+reviewer[ranNum]);
+			listItem.setAttribute('class',"OwnRev");
+			listItem.style.color = "white";
+			listItem.appendChild(document.createTextNode(owner[i]+reviewer[ranNum]));
+			listItem.textContent = owner[i]+" -- "+reviewer[ranNum];
+			orList.appendChild(listItem);
+			reviewer.splice(ranNum, 1);
+			numItems = numItems - 1;
+		}
+	}
+  </script>
+
 </head>
+ 
 <body>
-
-<div class="header">
-<h1 style="font-family:verdana; color:white;">Bismillah - Alhamdulillah</h1>
-
-  <p style="font-family:verdana; color:white;">Assalamualaikum Shakeel :)</p>
-</div>
-
-<ul>
-    <li><a href="#section1">Web</a></li>
-    <li><a href="#section2">DS</a></li>
-    <li><a href="#section2.2">Algo</a></li>
-    <li><a href="#section3">Java</a></li>
-    <li><a href="#section4">SNow</a></li>
-    <li><a href="#section5">Interview</a></li>
-    <li><a href="#section6">SQL</a></li>
-    <li><a href="#section7">.Net</a></li>
-</ul>
-
-<div id="totalmargin">
-
-<div class="main" id="section1"></div>
-<div id="rcorners2">
-<h4 id="title">Web development</h4>
-<hr class="dashedline">
-<div class="flex-container">
-    <div class="tooltip" ><img src="assets/fundamentals/html/syntax.svg" alt="syntax" width="70" height="70">
-        <p id="heading">HTML</p>
-        <span class="tooltiptext">
-        <h3>HTML</h3> 
-        <p >Learn the basics of HTML</p>
-        <ol>
-            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/HTML_basics" target="_blank"> MDN - HTML Basics</a></li>
-            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML" target="_blank"> MDN - Introduction to HTML</a></li>
-            <li><a href="https://www.codecademy.com/learn/learn-html" target="_blank"> Codeacademy - Learn HTML</a></li>
-            <li><a href="file:///F:/000.%20Visual%20Studio/website%20one/Web%20dev/HTML/html.html" target="_blank"> HTML Videos</a></li>
-          </ol>
-        </span>
-    </div>
-    <div class="tooltip" ><img src="assets/fundamentals/css/syntax.svg" alt="syntax" width="70" height="70">
-        <p id="heading">CSS</p>
-        <span class="tooltiptext">
-        <h3>CSS</h3> 
-        <p >Learn the basics of CSS</p>
-        <ol>
-            <li><a href="https://www.w3schools.com/css/css_tooltip.asp" target="_blank"> CSS Tooltip</a></li>
-            <li><a href="https://www.w3schools.com/cssref/sel_hover.asp" target="_blank"> CSS :hover Selector</a></li>
-          </ol>
-        </span>
-    </div>
-    <div class="tooltip" ><img src="assets/fundamentals/css/responsive-design.svg" alt="syntax" width="70" height="70">
-        <p id="heading">Bootstrap</p>
-        <span class="tooltiptext">
-        <h3>Bootstrap</h3> 
-        <p >Learn the basics of Bootstrap</p>
-        <ol>
-            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/HTML_basics" target="_blank"> MDN - HTML Basics</a></li>
-            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML" target="_blank"> MDN - Introduction to HTML</a></li>
-            <li><a href="https://www.codecademy.com/learn/learn-html" target="_blank"> Codeacademy - Learn HTML</a></li>
-          </ol>
-        </span>
-    </div>
-    <div class="tooltip" ><img src="assets/fundamentals/css/layout.svg" alt="synatx" width="70" height="70"><p id="heading">MDN - Web Dev</p>
-      <span class="tooltiptext">
-        <h3>Web Dev</h3> 
-        <p >Learn web development - HTML - CSS- JavaScript - Web Forms - Accessibility - Web Performance - Tools and Testing  - ServiceSide Website programming</p>
-        <ol>
-            <li><a href="https://developer.mozilla.org/en-US/docs/Learn" target="_blank"> MDN - Web Dev</a></li>
-        </ol>
-        </span>
-      </div>
-
-</div>
-
-<div class="flex-container">
-
-    <div class="tooltip" ><img src="assets/accessibility/accessible-forms.svg" alt="syntax" width="70" height="70">
-        <p id="heading">Hover Effects</p>
-        <span class="tooltiptext">
-        <h3>Hover Effects</h3> 
-        <p >Learn the basics of Hover Effects</p>
-        <ol>
-            <li><a href="https://www.w3schools.com/css/css_tooltip.asp" target="_blank"> Move the mouse over the text below</a></li>
-            <li><a href="https://www.w3schools.com/cssref/tryit.asp?filename=trycss_sel_link_more2" target="_blank"> Mouse over the links to see them change layout</a></li>
-            <li><a href="https://www.w3schools.com/howto/howto_css_zoom_hover.asp" target="_blank"> How TO - Zoom on Hover</a></li>
-            <li><a href="https://www.w3schools.com/cssref/tryit.asp?filename=trycss_sel_hover2" target="_blank"> Hover over me!</a></li>
-            <li><a href="https://www.w3schools.com/cssref/tryit.asp?filename=trycss_sel_hover_dropdown" target="_blank"> Show and hide a "dropdown" menu on mouse hover</a></li>
-            <li><a href="https://www.javatpoint.com/oprweb/test.jsp?filename=CSSHover3" target="_blank"> Image Overlay Title Effect</a></li>
-            <li><a href="https://www.w3schools.com/howto/howto_css_image_overlay.asp" target="_blank"> How TO - Image Hover Overlay</a></li>
-            <li><a href="https://www.w3schools.com/howto/howto_css_image_overlay_slide.asp" target="_blank"> How TO - Image Overlay Slide</a></li>
-            <li><a href="https://www.freecodecamp.org/news/hover-selector/" target="_blank"> CSS Hover Selector Explained</a></li>
-            <li><a href="https://www.w3schools.com/howto/howto_css_bg_gradient_scroll.asp" target="_blank"> Change Background Gradient on Scroll</a></li>
-          </ol>
-        </span>
-</div>
-
-<div class="tooltip" ><img src="assets/accessibility/alt-text.svg" alt="syntax" width="70" height="70">
-  <p id="heading">Video-Image-Text</p>
-  <span class="tooltiptext">
-  <h3>Video-Image-Text</h3> 
-  <p >Learn the basics of Video-Image-Text</p>
-  <ol>
-      <li><a href="https://developer.mozilla.org/en-US/docs/Web/Guide/Audio_and_video_delivery/Adding_captions_and_subtitles_to_HTML5_video" target="_blank"> MDN-Adding captions and subtitles to HTML5 video</a></li>
-    </ol>
-  </span>
-</div>
-
-<div class="main" id="section2"></div>
-</div>
-
-</div>
-
-
-<div id="rcorners2">
-
-<h4 id="title">Data Structures and Algorithms</h4>
-<hr class="dashedline">
-<div class="flex-container">
-  <div class="tooltip" ><img src="assets/algorithms-and-data-structures/data-structures/arrays.svg" alt="synatx" width="70" height="70"><p id="heading">DS - Main Intro</p>
-      <span class="tooltiptext">
-        <h3>Data Structure</h3> 
-        <p>Introduction </p>
-        <ol>
-            <li><a href="https://www.tutorialspoint.com/data_structures_algorithms/index.htm" target="_blank"> Tutorialspoint</a></li>
-            <li><a href="https://www.javatpoint.com/data-structure-tutorial#:~:text=Data%20Structures%20Tutorial&text=Data%20Structure%20is%20a%20way,%2C%20Sorting%2C%20Programs%2C%20etc." target="_blank"> JavaTpoint</a></li>
-            <li><a href="https://www.geeksforgeeks.org/data-structures/" target="_blank"> GeeksforGeeks</a></li>
-            <li><a href="https://onlinecourses.nptel.ac.in/noc20_cs85/course" target="_blank"> NPTEL</a></li>
-            <li><a href="https://www.cs.miami.edu/home/geoff/Courses/MTH517-00S/Content/" target="_blank"> University of Miami - Data Structures</a></li>
-    </ol>
-  </div>
-
-  <div class="tooltip" ><img src="assets/algorithms-and-data-structures/algorithms/sorting.svg" alt="synatx" width="70" height="70"><p id="heading">Algorithms Intro</p>
-    <span class="tooltiptext">
-      <h3>Algorithms</h3> 
-      <p>Introduction </p>
-      <ol>
-          <li><a href="https://www.geeksforgeeks.org/fundamentals-of-algorithms/" target="_blank"> GeeksforGeeks</a></li>
-  </ol>
-</div>
-
-<div class="tooltip" ><img src="assets/algorithms-and-data-structures/data-structures/heap.svg" alt="synatx" width="70" height="70"><p id="heading">DS + Algo</p>
-    <span class="tooltiptext">
-      <h3>DS + Algo</h3> 
-      <p>Introduction </p>
-      <ol>
-          <li><a href="https://www.lavivienpost.com/data-structures-and-algorithms/" target="_blank"> Main Intro</a></li>
-  </ol>
-</div>
-
-</div>
-
-    <!-- Data Structures 2nd Line -->
-
-<h4 id="title">Data Structure</h4>
-<hr class="dashedline">
-    <div class="flex-container">
-
-      
-      <div class="tooltip" ><img src="assets/algorithms-and-data-structures/data-structures/queues-and-stacks.svg" alt="synatx" width="70" height="70"><p id="heading">Stacks</p>
-        <span class="tooltiptext">
-          <h3>Stacks</h3> 
-          <p>Learn how and when stacks should be used.</p>
-          <ol>
-              <li><a href="https://docs.oracle.com/javase/7/docs/api/java/util/Stack.html" target="_blank"> Oracle Docs - Stacks</a></li>
-              <li><a href="https://www.cs.cmu.edu/~adamchik/15-121/lectures/Stacks%20and%20Queues/Stacks%20and%20Queues.html" target="_blank"> CS.CMU - Stacks and Queues</a></li>
-              <li><a href="https://www.geeksforgeeks.org/difference-between-stack-and-queue-data-structures/" target="_blank"> GeeksforGeeks - Diff btw Stacks & Queues</a></li>
-              <li><a href="https://medium.com/@hitherejoe/data-structures-stacks-queues-a3b3591c8cb0" target="_blank"> Medium - Stacks & Queues</a></li>
-              <li><a href="https://dev.to/emmabostian/stacks-vs-queues-in-javascript-4d1o" target="_blank"> Dev - Stacks & Queues</a></li>
-      </ol>
-      </div>
-
-      <div class="tooltip" ><img src="assets/algorithms-and-data-structures/data-structures/queues-and-stacks.svg" alt="synatx" width="70" height="70"><p id="heading">Queues</p>
-        <span class="tooltiptext">
-          <h3>Queues</h3> 
-          <p>Learn how and when queues should be used.<em><b><br>Interface Queue < the type of elements held in this collection></b></em></p>
-          <ol>
-              <li><a href="https://docs.oracle.com/javase/7/docs/api/java/util/Queue.html" target="_blank"> Oracle Docs - Queue</a></li>
-              <li><a href="https://www.cs.cmu.edu/~adamchik/15-121/lectures/Stacks%20and%20Queues/Stacks%20and%20Queues.html" target="_blank"> CS.CMU - Stacks and Queues</a></li>
-              <li><a href="https://www.geeksforgeeks.org/difference-between-stack-and-queue-data-structures/" target="_blank"> GeeksforGeeks - Diff btw Stacks & Queues</a></li>
-              <li><a href="https://medium.com/@hitherejoe/data-structures-stacks-queues-a3b3591c8cb0" target="_blank"> Medium - Stacks & Queues</a></li>
-              <li><a href="https://dev.to/emmabostian/stacks-vs-queues-in-javascript-4d1o" target="_blank"> Dev - Stacks & Queues</a></li>
-      </ol>
-      </div>
-      
-      <div class="tooltip" ><img src="assets/algorithms-and-data-structures/data-structures/trees.svg" alt="synatx" width="70" height="70"><p id="heading">Trees</p>
-        <span class="tooltiptext">
-          <h3>Trees</h3> 
-          <p>Learn how and when trees should be used</p>
-          <ol>
-              <li><a href="https://en.wikipedia.org/wiki/Tree_(data_structure)" target="_blank"> Wikipedia - Tree</a></li>
-              <li><a href="https://www.freecodecamp.org/news/all-you-need-to-know-about-tree-data-structures-bceacb85490c/" target="_blank"> Freecodecamp - About Tree</a></li>
-              <li><a href="https://www.tutorialspoint.com/data_structures_algorithms/tree_data_structure.htm" target="_blank"> Tutorialspoint - Tree</a></li>
-      </ol>
-      </div>
-
-    <div class="tooltip" ><img src="assets/algorithms-and-data-structures/data-structures/binary-indexed-tree.svg" alt="synatx" width="70" height="70"><p id="heading">Binary indexed<br> Tree</p>
-      <span class="tooltiptext">
-        <h3>Binary indexed Tree</h3> 
-        <p>Learn how and when binary indexed trees should be used.</p>
-        <ol>
-            <li><a href="https://en.wikipedia.org/wiki/Fenwick_tree" target="_blank"> Wikipedia - Fenwick tree</a></li>
-            <li><a href="https://cs.stackexchange.com/questions/10538/bit-what-is-the-intuition-behind-a-binary-indexed-tree-and-how-was-it-thought-a" target="_blank"> What is the intuition behind a binary indexed tree?</a></li>
-            <li><a href="https://www.geeksforgeeks.org/binary-indexed-tree-or-fenwick-tree-2/" target="_blank"> GeeksforGeeks - Binary Indexed Tree or Fenwick Tree</a></li>
-            <li><a href="https://github.com/trekhleb/javascript-algorithms/tree/master/src/data-structures/tree/fenwick-tree" target="_blank"> Github - Fenwick Tree / Binary Indexed Tree</a></li>
-            <li><a href="https://www.youtube.com/watch?v=CWDQJGaN1gY&index=18&t=0s&list=PLLXdhg_r2hKA7DPDsunoDZ-Z769jWn4R8" target="_blank"> Youtube - Binary Indexed Tree</a></li>
-            <li><a href="https://github.com/microsoft/fast-binary-indexed-tree-js" target="_blank"> Github - fast-binary-indexed-tree-js</a></li>
-    </ol>
-    </div>
-    
-    <div class="tooltip" ><img src="assets/algorithms-and-data-structures/data-structures/heap.svg" alt="synatx" width="70" height="70"><p id="heading">Heap</p>
-      <span class="tooltiptext">
-        <h3>Heap</h3> 
-        <p>Learn how and when heaps should be used </p>
-        <ol>
-            
-            <li><a href="https://en.wikipedia.org/wiki/Heap_(data_structure)" target="_blank"> Wikipedia - Heap</a></li>
-            <li><a href="https://www.tutorialspoint.com/data_structures_algorithms/heap_data_structure.htm" target="_blank"> Tutorialspoint - Heap </a></li>
-            <li><a href="https://medium.com/basecs/learning-to-love-heaps-cef2b273a238" target="_blank"> Medium - Learning to Love Heaps</a></li>
-            <li><a href="https://reactgo.com/javascript-heap-datastructure/" target="_blank"> Reactgo - How to implement Heap in JS</a></li>
-            <li><a href="https://www.youtube.com/watch?v=t0Cq6tVNRBA&list=PLLXdhg_r2hKA7DPDsunoDZ-Z769jWn4R8&index=5" target="_blank"> Youtube - Heap</a></li>
-    </ol>
-    </div>
-
-    <div class="tooltip" ><img src="assets/algorithms-and-data-structures/data-structures/red-black-tree.svg" alt="synatx" width="70" height="70"><p id="heading">Red-black Tree</p>
-      <span class="tooltiptext">
-        <h3>Red-black Tree</h3> 
-        <p>Learn how and when red-black trees should be used </p>
-        <ol>
-            <li><a href="https://en.wikipedia.org/wiki/Red%E2%80%93black_tree" target="_blank"> Wikipedia - Red-black Tree</a></li>
-            <li><a href="https://dev.to/vaidehijoshi/painting-nodes-black-with-red-black-trees" target="_blank"> Dev - Painting Nodes Black with Red-Black</a></li>
-            <li><a href="https://www.geeksforgeeks.org/red-black-tree-set-1-introduction-2/" target="_blank"> GeeksforGeeks - Red-Black Tree</a></li>
-            <li><a href="https://github.com/trekhleb/javascript-algorithms/tree/master/src/data-structures/tree/red-black-tree" target="_blank"> Github - Red-Black Tree</a></li>
-    </ol>
-    </div>
-
-    </div>
-
-    <!-- 3rd line -->
+  <h1>Logistics 1</h1>
+  <!--<ul id ="dynamic-list">-->
+  <ul id ="dynamic-list"></ul>
  
-    <div class="flex-container">
-    
-    <div class="tooltip" ><img src="assets/algorithms-and-data-structures/data-structures/trie.svg" alt="synatx" width="70" height="70"><p id="heading">Trie</p>
-      <span class="tooltiptext">
-        <h3>Trie</h3> 
-        <p>Learn how and when tries should be used </p>
-        <ol>
-            <li><a href="https://en.wikipedia.org/wiki/Trie" target="_blank"> Wikipedia - Trie</a></li>
-            <li><a href="https://www.geeksforgeeks.org/trie-insert-and-search/" target="_blank"> GeeksforGeeks - Trie(Insert and Search</a></li>
-            <li><a href="https://medium.com/basecs/trying-to-understand-tries-3ec6bede0014" target="_blank"> Medium - Trying to Understand Tries</a></li>
-            <li><a href="https://www.interviewcake.com/concept/java/trie" target="_blank"> Interview Cake- Trie</a></li>
-            <li><a href="https://www.youtube.com/watch?v=zIjfhVPRZCg&list=PLLXdhg_r2hKA7DPDsunoDZ-Z769jWn4R8&index=7" target="_blank"> Youtube - Data Structure: Tries</a></li>
-            <li><a href="https://hackernoon.com/practical-data-structures-for-frontend-applications-when-to-use-tries-5428a565eba4" target="_blank"> Practical Data Structure: Tries</a></li>
-    </ol>
-    </div>
-    
-    <div class="tooltip" ><img src="assets/algorithms-and-data-structures/data-structures/k-d-tree.svg" alt="synatx" width="70" height="70"><p id="heading">K-D Tree</p>
-      <span class="tooltiptext">
-        <h3>K-D Tree</h3> 
-        <p>Learn how and when K-D trees should be used </p>
-        <ol>
-            <li><a href="https://en.wikipedia.org/wiki/K-d_tree" target="_blank"> Wikipedia - K-D Tree</a></li>
-            <li><a href="https://github.com/ubilabs/kd-tree-javascript" target="_blank"> Github - K-D Tree in JS</a></li>
-            <li><a href="https://www.cs.cmu.edu/~ckingsf/bioinfo-lectures/kdtrees.pdf" target="_blank"> CS.CMU - K-D Tree</a></li>
-            <li><a href="https://www.youtube.com/watch?v=TLxWtXEbtFE" target="_blank"> Youtube - K-D Tree</a></li>
-    </ol>
-    </div>
-    
-    <div class="tooltip" ><img src="assets/algorithms-and-data-structures/data-structures/hash-tables.svg" alt="synatx" width="70" height="70"><p id="heading">Hash Tables</p>
-      <span class="tooltiptext">
-        <h3>Hash Tree</h3> 
-        <p>Learn how and when hash tables should be used </p>
-        <ol>
-            <li><a href="https://en.wikipedia.org/wiki/Hash_table" target="_blank"> Wikipedia - Hash Table</a></li>
-            <li><a href="https://yourbasic.org/algorithms/hash-tables-explained/" target="_blank"> Hash Tables Explained</a></li>
-            <li><a href="https://www.hackerearth.com/practice/data-structures/hash-tables/basics-of-hash-tables/tutorial/" target="_blank"> Basics of Hash Tables</a></li>
-            <li><a href="https://medium.com/@yanganif/javascript-hash-table-8878afceecbc" target="_blank"> Medium - JavaScript Hash Tables</a></li>
-            <li><a href="https://codeburst.io/objects-and-hash-tables-in-javascript-a472ad1940d9" target="_blank"> Objects and Hash Tables in JS</a></li>
-    </ol>
-    </div>
-
-    <div class="tooltip" ><img src="assets/algorithms-and-data-structures/data-structures/arrays.svg" alt="synatx" width="70" height="70"><p id="heading">Arrays</p>
-      <span class="tooltiptext">
-        <h3>Arrays + ArrayList</h3> 
-        <p>Learn how and when Arrays should be used </p>
-        <ol>
-            <li><a href="https://docs.oracle.com/javase/7/docs/api/java/util/Arrays.html" target="_blank"> Oracle Docs - Arrays</a></li>
-            <li><a href="https://docs.oracle.com/javase/7/docs/api/java/util/ArrayList.html" target="_blank"> Oracle Docs - ArrayList</a></li>
-    </ol>
-    </div>
-    
-    <div class="tooltip" ><img src="assets/algorithms-and-data-structures/data-structures/linked-lists.svg" alt="synatx" width="70" height="70"><p id="heading">Linked Lists</p>
-      <span class="tooltiptext">
-        <h3>Linked Lists</h3> 
-        <p>Learn how and when linked lists should be used </p>
-        <ol>
-            <li><a href="https://docs.oracle.com/javase/7/docs/api/java/util/LinkedList.html" target="_blank"> Oracle Docs - LinkedList</a></li>
-            <li><a href="https://en.wikipedia.org/wiki/Linked_list" target="_blank"> Wikipedia - Linked List</a></li>
-            <li><a href="https://www.studytonight.com/data-structures/introduction-to-linked-list" target="_blank"> Intro to Linked Lists</a></li>
-            <li><a href="https://codeburst.io/linked-lists-in-javascript-es6-code-part-1-6dd349c3dcc3" target="_blank"> Linked Lists in JS</a></li>
-            <li><a href="https://hackernoon.com/the-little-guide-of-linked-list-in-javascript-9daf89b63b54" target="_blank"> The Little Guide of Linkedd List in JS</a></li>
-    </ol>
-    </div>
-    
-    <div class="tooltip" ><img src="assets/algorithms-and-data-structures/data-structures/graphs.svg" alt="synatx" width="70" height="70"><p id="heading">Graphs</p>
-      <span class="tooltiptext">
-        <h3>Graphs</h3> 
-        <p>Learn how and when graphs should be used </p>
-        <ol>
-            <li><a href="https://en.wikipedia.org/wiki/Graph_theory" target="_blank"> Wikipedia - Graph Theory</a></li>
-            <li><a href="https://www.geeksforgeeks.org/implementation-graph-javascript/" target="_blank"> GeeksforGeeks - Implementation of Graph in JS</a></li>
-            <li><a href="https://runestone.academy/runestone/books/published/pythonds/Graphs/Objectives.html" target="_blank"> Graphs and Graph Algorithms</a></li>
-            <li><a href="https://hackernoon.com/the-javascript-developers-guide-to-graphs-and-detecting-cycles-in-them-96f4f619d563" target="_blank"> JS Developer's Guide to Graphs</a></li>
-    </ol>
-    </div>
-
-</div>
-
-    
-
-    <!-- Analysis -->
-<h4 id="title">Analysis</h4>
-  <hr class="dashedline">
-  <div class="flex-container">
-    <div class="tooltip" ><img src="assets/algorithms-and-data-structures/analysis/time-complexity.svg" alt="synatx" width="70" height="70"><p id="heading">Time<br> Complexity</p>
-        <span class="tooltiptext">
-          <h3>Time Complexity</h3> 
-          <p>Learn about time complexity and how it can be used to analyze an algorithm </p>
-          <ol>
-            <li><a href="https://en.wikipedia.org/wiki/Time_complexity" target="_blank"> Wikipedia - Time Complexity</a></li>
-            <li><a href="https://www.studytonight.com/data-structures/time-complexity-of-algorithms" target="_blank"> Time Complexity</a></li>
-            <li><a href="https://www.freecodecamp.org/news/time-complexity-of-algorithms/" target="_blank"> Freecodecamp - An Intro of Time Complexity</a></li>
-            <li><a href="https://adrianmejia.com/most-popular-algorithms-time-complexity-every-programmer-should-know-free-online-tutorial-course/" target="_blank"> 8 time complexities that every programmer should know</a></li>
-            <li><a href="https://www.jenniferbland.com/time-complexity-analysis-in-javascript/" target="_blank"> Time Complexity Analysis in JS</a></li>
-            <li><a href="https://codeburst.io/algorithms-i-searching-and-sorting-algorithms-56497dbaef20" target="_blank"> An intro to Algorithms</a></li>
-      </ol>
-    </div>
-  
-    <div class="tooltip" ><img src="assets/algorithms-and-data-structures/analysis/cost-model.svg" alt="synatx" width="70" height="70"><p id="heading">Cost Model</p>
-      <span class="tooltiptext">
-        <h3>Cost Model</h3> 
-        <p>Learn how to setup a cost model for an algorithm </p>
-        <ol>
-            <li><a href="https://en.wikipedia.org/wiki/Analysis_of_algorithms" target="_blank"> Wikipedia - Analysis of Algorithms</a></li>
-            <li><a href="https://aofa.cs.princeton.edu/10analysis/" target="_blank"> Analysis of Algorithms</a></li>
-            <li><a href="https://v8.dev/blog/cost-of-javascript-2019" target="_blank"> The cost of JS in 2019</a></li>
-    </ol>
-  </div>
-  
-  <div class="tooltip" ><img src="assets/algorithms-and-data-structures/analysis/order-of-growth.svg" alt="synatx" width="70" height="70"><p id="heading">Order of Growth</p>
-      <span class="tooltiptext">
-        <h3>Order of Growth</h3> 
-        <p>Learn how to make an order-of-growth classification to classify the cost model.</p>
-        <ol>
-            <li><a href="https://www.quora.com/What-is-the-meaning-of-order-of-growth-in-algorithm-analysis-and-how-can-we-find-the-order-of-growth-of-given-algorithm" target="_blank"> Quora - What is the meaning of 'Order of Growth'</a></li>
-            <li><a href="https://www.ccs.neu.edu/home/jaa/CS7800.12F/Information/Handouts/order.html" target="_blank"> Quora - Orders of Growth</a></li>
-            <li><a href="https://www.coursera.org/lecture/algorithms-part1/order-of-growth-classifications-Xk03a" target="_blank"> Coursera - Order of Growth Classifications</a></li>
-            
-    </ol>
-  </div>
-  
-  <div class="tooltip" ><img src="assets/algorithms-and-data-structures/analysis/big-o-notation.svg" alt="synatx" width="70" height="70"><p id="heading">Big O notation</p>
-    <span class="tooltiptext">
-      <h3>Big O notation</h3> 
-      <p>Learn how to use Big O notation to classify the time complexity of an algorithm</p>
-      <ol>
-          <li><a href="https://en.wikipedia.org/wiki/Big_O_notation" target="_blank"> Wikipedia - Big O notation</a></li>
-          <li><a href="https://medium.com/javascript-scene/time-complexity-big-o-notation-1a4310c3ee4b" target="_blank"> Time Complexity / Big O Notation</a></li>
-          <li><a href="https://medium.com/cesars-tech-insights/big-o-notation-javascript-25c79f50b19b" target="_blank"> Big O Notation in JS</a></li>
-          <li><a href="https://medium.com/front-end-weekly/big-o-in-js-the-basic-that-you-need-to-know-a5abb45570fa" target="_blank"> Big O in JS: The basic that you need to know</a></li>
-          <li><a href="https://medium.com/@gmedina229/big-o-in-javascript-36ff67766051" target="_blank"> Big O in JS</a></li>
-          <li><a href="https://dev.to/mattdmccarley/what-is-big-o-notation-and-why-is-it-useful-2b7l" target="_blank"> Dev.to - What Big O Notation, & Why is it useful?</a></li>
-          <li><a href="https://dev.to/yashwanthambati/big-o-notation-complete-guide-226h" target="_blank"> Dev.to - Big O Notation useful guide</a></li>
-          
-  </ol>
-</div>
-
-<div class="tooltip" ><img src="assets/algorithms-and-data-structures/analysis/space-complexity.svg" alt="synatx" width="70" height="70"><p id="heading">Space Complexity</p>
-    <span class="tooltiptext">
-      <h3>Space Complexity</h3> 
-      <p>Learn about space complexity and how it can be used to analyze an algorithm.</p>
-      <ol>
-        <li><a href="https://www.studytonight.com/data-structures/space-complexity-of-algorithms" target="_blank"> Space Complexity of Algorithms</a></li>
-        <li><a href="https://developers.google.com/web/tools/chrome-devtools/memory-problems" target="_blank"> Google Devs - Fix Memory Problems</a></li>
-        <li><a href="https://developers.google.com/web/tools/chrome-devtools/memory-problems/memory-101" target="_blank"> Google Devs - Memory Terminology</a></li>
-        <li><a href="https://developers.google.com/web/tools/chrome-devtools/memory-problems/heap-snapshots" target="_blank"> Google Devs - How to Record Heap Snapshots</a></li>
-        <li><a href="https://medium.com/@sarahelson81/debugging-memory-leaks-in-javascript-ed6d0fa84b40" target="_blank"> Debugging Memory Leaks in JS</a></li>
-        <li><a href="https://en.wikipedia.org/wiki/Space_complexity" target="_blank"> Wikipedia - Space Complexity</a></li>
-        <li><a href="http://exploreshaifali.github.io/2014/02/13/Space-Complexity/" target="_blank"> Space Complexity</a></li>
-          
-  </ol>
-  <div class="main" id="section2.2"></div>
-</div>
-
-
-
-  </div>
-
+  <script>
+    var toppings = ["Adil", "Aruna", "Arun", "Aslin", "Devyani", 
+                    "Goutham", "Rajesh", "Siva", "Shankara", 
+					"Subbarao", "Madhavi", "Shubhangi" ];
  
-  <h4 id="title">Algorithms</h4>
-  <hr class="dashedline">
-  <div class="flex-container">
+    /*
+      Add each topping from the toppings array 
+      as a list item under the ul tag!
+    */
+    // var ul = document.querySelector("ul");
+    var ul = document.getElementById("dynamic-list");
 
-    <div class="tooltip" ><img src="assets/algorithms-and-data-structures/algorithms/sorting.svg" alt="synatx" width="70" height="70"><p id="heading">Sorting</p>
-      <span class="tooltiptext">
-        <h3>Sorting</h3> 
-        <p>Learn about the most important sorting algorithms and figure out what challenges there are involved with implementing one</p>
-        <ol>
-          <li><a href="https://blog.bitsrc.io/a-guide-to-sorting-algorithms-in-javascript-5b32da4eae1e" target="_blank"> A Guide To Sorting Algorithms in JavaScript</a></li>
-          <li><a href="https://dev.to/wangonya/sorting-algorithms-with-javascript-part-1-4aca" target="_blank"> Dev.to - Sorting Algorithms with JS</a></li>
-          <li><a href="https://www.studytonight.com/data-structures/introduction-to-sorting" target="_blank"> Intro to Sorting</a></li>
-          <li><a href="https://medium.com/@rwillt/implementing-sorting-algorithms-in-javascript-b08504cdf4a9" target="_blank"> Implementing Sorting Algo in JS</a></li>
-          <li><a href="https://notlaura.com/day-6-algorithms-sorting-algorithms-in-javascript/" target="_blank"> Algo - Sorting in JS</a></li>
-    </ol>
-  </div>
-
-  <div class="tooltip" ><img src="assets/algorithms-and-data-structures/algorithms/insertion-sort.svg" alt="synatx" width="70" height="70"><p id="heading">Insert Sort</p>
-    <span class="tooltiptext">
-      <h3>Insertion Sort</h3> 
-      <p>Learn about the insertion sort algorithm</p>
-      <ol>
-        <li><a href="https://en.wikipedia.org/wiki/Insertion_sort" target="_blank"> Wikipedia - Insertion Sort/a></li>
-        <li><a href="https://www.geeksforgeeks.org/insertion-sort/" target="_blank"> GeeksforGeeks - Insertion Sort</a></li>
-        <li><a href="https://www.interviewbit.com/tutorial/insertion-sort-algorithm/" target="_blank"> Insertion Sorting Algo</a></li>
-        <li><a href="https://dev.to/ryan_dunton/insertion-sorting-for-beginners-in-js------fkg" target="_blank"> Dev.to - Insertion Sorting for Beginners in JS</a></li>
-        <li><a href="https://medium.com/dailyjs/insertion-sort-in-javascript-9c077844717a" target="_blank"> Medium - Algo : Insertion Sort in JS</a></li>          
-  </ol>
-</div>
-
-<div class="tooltip" ><img src="assets/algorithms-and-data-structures/algorithms/quicksort.svg" alt="synatx" width="70" height="70"><p id="heading">Quicksort</p>
-  <span class="tooltiptext">
-    <h3>Quicksort</h3> 
-    <p>Learn about the quicksort algorithm</p>
-    <ol>
-      <li><a href="https://en.wikipedia.org/wiki/Quicksort" target="_blank"> Wikipedia - Quicksort</a></li>
-      <li><a href="https://medium.com/karuna-sehgal/a-quick-explanation-of-quick-sort-7d8e2563629b" target="_blank"> A Quick Explanation of Quick Sort</a></li>
-      <li><a href="https://www.geeksforgeeks.org/quick-sort/" target="_blank"> GeeksforGeeks - Quick Sort</a></li>
-      <li><a href="https://medium.com/@Charles_Stover/implementing-quicksort-in-javascript-8044a8e2bf39" target="_blank"> Implementing Quicksort in JS</a></li>
-      <li><a href="https://humanwhocodes.com/blog/2012/11/27/computer-science-in-javascript-quicksort/" target="_blank"> Csc in JS: Quicksort</a></li>
-        
-</ol>
-</div>
-<div class="tooltip" ><img src="assets/algorithms-and-data-structures/algorithms/mergesort.svg" alt="synatx" width="70" height="70"><p id="heading">Mergesort</p>
-  <span class="tooltiptext">
-    <h3>Mergesort</h3> 
-    <p>Learn about the mergesort algorithm</p>
-    <ol>
-      <li><a href="https://en.wikipedia.org/wiki/Merge_sort" target="_blank"> Wikipedia - Merge sort</a></li>
-      <li><a href="https://medium.com/javascript-in-plain-english/javascript-merge-sort-3205891ac060" target="_blank"> Merge Sort Algo in JS</a></li>
-      <li><a href="https://medium.com/karuna-sehgal/a-simplified-explanation-of-merge-sort-77089fe03bb2" target="_blank"> A Simplified Explanation of Merge Sort</a></li>
-      <li><a href="https://www.khanacademy.org/computing/computer-science/algorithms/merge-sort/a/overview-of-merge-sort" target="_blank"> Overview of merge sort</a></li>
-      <li><a href="https://forum.freecodecamp.org/t/the-merge-sort-algorithm-explained/16104" target="_blank"> Freecodecamp - The Merge Sort Algo</a></li>
-    </ol>
-</div>
-<div class="tooltip" ><img src="assets/algorithms-and-data-structures/algorithms/heapsort.svg" alt="synatx" width="70" height="70"><p id="heading">Heapsort</p>
-  <span class="tooltiptext">
-    <h3>Heapsort</h3> 
-    <p>Learn about the heapsort algorithm.</p>
-    <ol>
-      <li><a href="https://en.wikipedia.org/wiki/Heapsort" target="_blank"> Wikipedia - Heapsort</a></li>
-      <li><a href="https://medium.com/basecs/heapify-all-the-things-with-heap-sort-55ee1c93af82" target="_blank"> Heapify All the Things with Heap Sort</a></li>
-      <li><a href="https://www.studytonight.com/data-structures/heap-sort" target="_blank"> Heap Sort Algo</a></li>
-      <li><a href="https://www.interviewcake.com/concept/java/heapsort" target="_blank"> Heapsort Algo</a></li>
-      <li><a href="https://brilliant.org/wiki/heap-sort/" target="_blank"> Heap Sort</a></li> 
-        
-</ol>
-</div>
-
-  </div>
-  <!-- Algo 2nd line -->
-  <div class="flex-container">
-<div class="tooltip" ><img src="assets/algorithms-and-data-structures/algorithms/searching.svg" alt="synatx" width="70" height="70"><p id="heading">Searching</p>
-  <span class="tooltiptext">
-    <h3>Searching</h3> 
-    <p>Learn about the most important searching algorithms and figure out what challenges there are involved with implementing one</p>
-    <ol>
-      <li><a href="https://en.wikipedia.org/wiki/Search_algorithm" target="_blank"> Wikipedia - Seach Algorithm</a></li>
-      <li><a href="https://github.com/Crizstian/data-structure-and-algorithms-with-ES6/tree/master/13-chapter-Searching-Algorithms" target="_blank"> Search Algo with ES6</a></li>
-      <li><a href="https://www.studytonight.com/data-structures/search-algorithms" target="_blank"> Introduction to Searching Algo</a></li>
-      <li><a href="https://medium.com/employbl/implement-linear-and-binary-search-algorithms-with-javascript-2149997588f0" target="_blank"> implement Linear and Binary Search Algo with JS</a></li>
-      <li><a href="https://www.scriptonitejs.com/javascript-searching-algorithms/" target="_blank"> Searching Algo in JS</a></li>
-</ol>
-</div>
-<div class="tooltip" ><img src="assets/algorithms-and-data-structures/algorithms/binary-search.svg" alt="synatx" width="70" height="70"><p id="heading">Binary Search</p>
-  <span class="tooltiptext">
-    <h3>Binary Search</h3> 
-    <p>Learn about the binary search algorithm.</p>
-    <ol>
-      <li><a href="https://en.wikipedia.org/wiki/Binary_search_algorithm" target="_blank"> Wikipedia - Binary Search Algo</a></li>
-      <li><a href="https://reactgo.com/binary-search-algorithm-javascript/" target="_blank"> How to implement a Binary Search</a></li>
-      <li><a href="https://www.interviewbit.com/courses/programming/topics/binary-search/" target="_blank"> Binary Search</a></li>
-      <li><a href="https://medium.com/@jeffrey.allen.lewis/javascript-algorithms-explained-binary-search-25064b896470" target="_blank"> What is Binary Search, A Detailed Step-By-Step</a></li>
-      <li><a href="https://hackernoon.com/programming-with-js-binary-search-aaf86cef9cb3" target="_blank"> Programming with JS: Binary Search</a></li>
-      <li><a href="https://www.geeksforgeeks.org/binary-search-in-javascript/" target="_blank"> GeeksfoeGeeks - Binary Search in JS</a></li>        
-</ol>
-</div>
-<div class="tooltip" ><img src="assets/algorithms-and-data-structures/algorithms/breadth-first-search.svg" alt="synatx" width="70" height="70"><p id="heading">Breadth First<br> Search</p>
-  <span class="tooltiptext">
-    <h3> Breadth First Search</h3> 
-    <p>Learn about the breadth first search algorithm.</p>
-    <ol>
-      <li><a href="https://en.wikipedia.org/wiki/Breadth-first_search" target="_blank"> Wikipedia - Breadth First Search</a></li>
-      <li><a href="https://medium.com/basecs/breaking-down-breadth-first-search-cebe696709d9" target="_blank"> Breaking Down Breadth First Search</a></li>
-      <li><a href="https://medium.com/dailyjs/breadth-first-search-in-javascript-e655cd824fa4" target="_blank"> Breadth First Search in JS</a></li>
-      <li><a href="https://github.com/trekhleb/javascript-algorithms/tree/master/src/algorithms/graph/breadth-first-search" target="_blank"> Github - Breadth First Search</a></li>
-      <li><a href="https://levelup.gitconnected.com/the-magicians-guide-to-algorithms-part-4-the-breadth-first-search-b800aec8ccf8" target="_blank"> The Magician's Guide to Algo</a></li>        
-</ol>
-</div>
-<div class="tooltip" ><img src="assets/algorithms-and-data-structures/algorithms/depth-first-search.svg" alt="synatx" width="70" height="70"><p id="heading">Depth First<br> Search</p>
-  <span class="tooltiptext">
-    <h3>Depth First Search</h3> 
-    <p>Learn about the depth first search algorithm</p>
-    <ol>
-      <li><a href="https://en.wikipedia.org/wiki/Depth-first_search" target="_blank"> Wikipedia - Depth First Search</a></li>
-      <li><a href="https://edgy.app/depth-first-search-algorithm-what-it-is-and-how-it-works" target="_blank"> Depth First Search Algo</a></li>
-      <li><a href="https://medium.com/employbl/depth-first-and-breadth-first-search-on-trees-in-javascript-58dcd6ff8de1" target="_blank"> Depth First and Breadth First Search on Trees</a></li>
-      <li><a href="https://medium.com/@kenny.hom27/breadth-first-vs-depth-first-tree-traversal-in-javascript-48df2ebfc6d1" target="_blank"> Breadth First vs Depth First Tree Traversal</a></li>
-      <li><a href="https://github.com/trekhleb/javascript-algorithms/tree/master/src/algorithms/graph/depth-first-search" target="_blank"> Github - Depth First Search</a></li>      
-</ol>
-</div>
-<div class="tooltip" ><img src="assets/algorithms-and-data-structures/algorithms/dijkstras-algorithm.svg" alt="synatx" width="70" height="70"><p id="heading">Dijkstra's<br> Algorithm</p>
-  <span class="tooltiptext">
-    <h3>Dijkstra's Algorithm</h3> 
-    <p>Learn about dijkstra's algorithm</p>
-    <ol>
-      <li><a href="https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm" target="_blank"> Wikipedia - Dijkstra's Algorithm</a></li>
-      <li><a href="https://courses.cs.washington.edu/courses/cse373/16su/lectures/lecture15.pdf" target="_blank"> Dijkstra's Algorithm</a></li>
-      <li><a href="https://hackernoon.com/how-to-implement-dijkstras-algorithm-in-javascript-abdfd1702d04" target="_blank"> How to implement Dijkstra's Algorithm</a></li>
-      <li><a href="https://medium.com/@adriennetjohnson/a-walkthrough-of-dijkstras-algorithm-in-javascript-e94b74192026" target="_blank"> A Walk through of Dijkstra's Algorithm</a></li>        
-</ol>
-</div>
-
-  </div>
-
-<div class="flex-container">
-<div class="tooltip" ><img src="assets/algorithms-and-data-structures/algorithms/string-search.svg" alt="synatx" width="70" height="70"><p id="heading">String Search</p>
-  <span class="tooltiptext">
-    <h3>String Search</h3> 
-    <p>Learn about various algorithms for searching in strings.</p>
-    <ol>
-      <li><a href="" target="_blank"> </a></li>
-      <li><a href="" target="_blank"> </a></li>
-      <li><a href="" target="_blank"> </a></li>
-      <li><a href="" target="_blank"> </a></li>
-      <li><a href="" target="_blank"> </a></li>
-      <li><a href="" target="_blank"> </a></li>
-      <li><a href="" target="_blank"> </a></li>
-        
-</ol>
-</div>
-<div class="tooltip" ><img src="assets/algorithms-and-data-structures/algorithms/hashing.svg" alt="synatx" width="70" height="70"><p id="heading">Hashing</p>
-  <span class="tooltiptext">
-    <h3>Hashing</h3> 
-    <p>Learn about hashing algorithms.</p>
-    <ol>
-      <li><a href="" target="_blank"> </a></li>
-      <li><a href="" target="_blank"> </a></li>
-      <li><a href="" target="_blank"> </a></li>
-      <li><a href="" target="_blank"> </a></li>
-      <li><a href="" target="_blank"> </a></li>
-      <li><a href="" target="_blank"> </a></li>
-      <li><a href="" target="_blank"> </a></li>
-        
-</ol>
-
-</div>
-
-<div class="main" id="section3"></div>
-    </div>
-  </div>
-
-
-
-
-  </div>
- 
-</div>
-</div>
-
-
-
-<div id="rcorners2">
-
-  
-  <h4 id="title">Java</h4>
-  <hr class="dashedline">
-  <div class="flex-container">
-    <div class="tooltip" ><img src="assets/fundamentals/javascript/syntax.svg" alt="synatx" width="70" height="70"><p id="heading">Main Intro</p>
-        <span class="tooltiptext">
-          <h3>Java</h3> 
-          <p>Introduction </p>
-          <ol>
-            <li><a href="https://www.geeksforgeeks.org/java/" target="_blank"> GeeksforGeeks</a></li>
-            <li><a href="https://www.youtube.com/playlist?list=PLA70DBE71B0C3B142" target="_blank"> Youtube - Stanford Computer Science Department</a></li>
-      </ol>
-    </div>
-  
-    <div class="tooltip" ><img src="assets/algorithms-and-data-structures/algorithms/sorting.svg" alt="synatx" width="70" height="70"><p id="heading">OOP</p>
-      <span class="tooltiptext">
-        <h3>OOP</h3> 
-        <p>Introduction Object Oriented Programming</p>
-        <ol>
-            <li><a href="https://www.geeksforgeeks.org/object-oriented-programming-oops-concept-in-java/?ref=lbp" target="_blank"> GeeksforGeeks - OOP concept</a></li>
-    </ol>
-  </div>
-  
-  
-  <div class="tooltip" ><img src="assets/build-tools/npm-scripts.svg" alt="synatx" width="70" height="70"><p id="heading">Program<br> Examples</p>
-      <span class="tooltiptext">
-        <h3>Java Examples</h3> 
-        <p>Java Programming every concept with Example</p>
-        <ol>
-            <li><a href="https://www.tutorialspoint.com/javaexamples/index.htm" target="_blank"> Tutorialspoint - Java Examples</a></li>
-            <li><a href="https://www.javatpoint.com/java-programs" target="_blank"> JavaTpoint - Java Program Examples</a></li>
-            <li><a href="https://www.programiz.com/java-programming/examples" target="_blank"> Programiz - Java Program Examples</a></li>
-            
-    </ol>
-  </div>
-  <div class="main" id="section4"></div>
-  </div>
-  </div>
-
-
-
-
-  <div id="rcorners2">
-  
-<h4 id="title">ServiceNow</h4>
-<hr class="dashedline">
-<div class="flex-container">
-<div class="tooltip" ><img id="imageborder" src="assets/ServiceNow.svg" alt="synatx" width="70" height="70"><p id="heading">Main Intro</p>
-    <span class="tooltiptext">
-      <h3>ServiceNow</h3> 
-      <p >ServiceNow Main Content</p>
-      <ol>
-          <li><a href="https://nowlearning.service-now.com/lxp" target="_blank"> NowLearning</a></li>
-          <li><a href="https://developer.servicenow.com/dev.do#!/home" target="_blank"> Developer</a></li>
-          <li><a href="https://dev92876.service-now.com/" target="_blank"> My Instance</a></li>
-  </ol>
-</div>
-<div class="tooltip" ><img id="imageborder" src="assets/ServiceNow.svg" alt="synatx" width="70" height="70"><p id="heading">ITSM</p>
-    <span class="tooltiptext">
-      <h3>ITSM</h3> 
-      <p >ITSM - Incident Management</p>
-      <ol>
-          <li><a href="https://docs.servicenow.com/bundle/orlando-it-service-management/page/product/incident-management/concept/c_IncidentManagement.html" target="_blank"> Snow docs - Incident Management</a></li>
-          <li><a href="" target="_blank"> Developer</a></li>
-          <li><a href="" target="_blank"> My Instance</a></li>
-  </ol>
-</div>
-<div class="tooltip" ><img id="imageborder" src="assets/ServiceNow.svg" alt="synatx" width="70" height="70"><p id="heading">Web Services</p>
-    <span class="tooltiptext">
-      <h3>Web Services</h3> 
-      <p >REST API - Scripted REST APIs - SOAP web service - JSONv2 Web Service - RSS feed generator - Exporting and conver</p>
-      <ol>
-          <li><a href="https://docs.servicenow.com/bundle/orlando-application-development/page/integrate/web-services/reference/r_AvailableWebServices.html" target="_blank"> Snow OnDemand Videos</a></li>
-  </ol>
-</div>
-
-<div class="tooltip" ><img id="imageborder" src="assets/ServiceNow.svg" alt="synatx" width="70" height="70"><p id="heading" >OnDemand<br> Videos</p>
-    <span class="tooltiptext">
-      <h3>On Demand Videos</h3> 
-      <p >all on demand videos available here</p>
-      <ol>
-          <li><a href="https://www.servicenow.com/events/on-demand-webinars.html" target="_blank"> Snow docs - WEb Services</a></li>
-      </ol>
-</div>
-
-<div class="tooltip" ><img id="imageborder" src="assets/ServiceNow.svg" alt="synatx" width="70" height="70"><p id="heading" >Paris release<br> notes</p>
-  <span class="tooltiptext">
-    <h3>Paris release notes</h3> 
-    <p >all on demand videos available here</p>
-    <ol>
-        <li><a href="https://docs.servicenow.com/bundle/paris-release-notes/page/release-notes/family-release-notes.html" target="_blank"> SNow Docs - Paris release notes</a></li>
-    </ol>
-</div>
-<div class="main" id="section5"></div>
-</div>
-</div>
-
-
-
-
-<div id="rcorners2">
-
-    <h4 id="title">Interview</h4>
-    <hr class="dashedline">
-    <div class="flex-container">
-    <div class="tooltip" ><img src="assets/the-modern-web/houdini.svg" alt="synatx" width="70" height="70">
-      <p id="heading">Company</p>
-        <span class="tooltiptext">
-          <h3>Company Interview Questions</h3> 
-          <p >Interview Collection - Infosys, ...</p>
-          <ol>
-              <li><a href="https://www.javatpoint.com/infosys-interview-questions" target="_blank"> JavaTpoint</a></li>
-      </ol>
-    </div>
-    <div class="tooltip" ><img src="assets/architecture-and-paradigms/architecture/prototype.svg" alt="synatx" width="70" height="70">
-      <p id="heading">Mock Test</p>
-        <span class="tooltiptext">
-          <h3>Mock Test</h3> 
-          <p >Topic wise multiple choice questions in computer science -> Java - Data Structures - Algorithms - DBMS - Aptitude Test</p>
-          <ol>
-              <li><a href="https://www.geeksforgeeks.org/quiz-corner-gq/#Aptitude%20Mock%20Tests" target="_blank"> GeeksforGeeks - Mock Test</a></li>
-      </ol>
-    </div>
-
-  </div>
-
-  <div class="flex-container">
-  <div class="tooltip" ><img src="assets/algorithms-and-data-structures/algorithms/string-search.svg" alt="synatx" width="70" height="70"><p id="heading">String Search</p>
-    <span class="tooltiptext">
-      <h3>String Search</h3> 
-      <p>Learn about various algorithms for searching in strings.</p>
-      <ol>
-        <li><a href="" target="_blank"> </a></li>
-        <li><a href="" target="_blank"> </a></li>
-        <li><a href="" target="_blank"> </a></li>
-        <li><a href="" target="_blank"> </a></li>
-        <li><a href="" target="_blank"> </a></li>
-        <li><a href="" target="_blank"> </a></li>
-        <li><a href="" target="_blank"> </a></li>
-          
-  </ol>
-  </div>
-  <div class="tooltip" ><img src="assets/algorithms-and-data-structures/algorithms/hashing.svg" alt="synatx" width="70" height="70"><p id="heading">Hashing</p>
-    <span class="tooltiptext">
-      <h3>Hashing</h3> 
-      <p>Learn about hashing algorithms.</p>
-      <ol>
-        <li><a href="" target="_blank"> </a></li>
-        <li><a href="" target="_blank"> </a></li>
-        <li><a href="" target="_blank"> </a></li>
-        <li><a href="" target="_blank"> </a></li>
-        <li><a href="" target="_blank"> </a></li>
-        <li><a href="" target="_blank"> </a></li>
-        <li><a href="" target="_blank"> </a></li>
-          
-  </ol>
-  </div>
-  
-  
-      </div>
-    </div>
-    <div class="main" id="section6"></div>
-
-    </div>
-
-
-
-  </div>
-  
-
-
-
-<div id="rcorners2">
-
-        <h4 id="title">SQL</h4>
-        <hr class="dashedline">
-        <div class="flex-container">
-        <div class="tooltip" ><img src="assets/databases-and-servers/databases/mysql.svg" alt="synatx" width="70" height="70">
-          <p id="heading">MySQL</p>
-            <span class="tooltiptext">
-              <h3>MySQL</h3> 
-              <p >MySQL database</p>
-              <ol>
-                  <li><a href="https://www.javatpoint.com/mysql-drop-database" target="_blank"> JavaTpoint - MySQL DROP Database</a></li>
-                  <li><a href="https://www.mysql.com/" target="_blank"> MySQL</a></li>
-                  <li><a href="https://en.wikipedia.org/wiki/MySQL" target="_blank"> Wikipedia - MySQL</a></li>
-                  <li><a href="https://www.tutorialspoint.com/mysql/index.htm" target="_blank"> Tutorialspoint - MySQL Tutorial</a></li>
-                  <li><a href="https://searchoracle.techtarget.com/definition/MySQL" target="_blank"> MySQL Definition</a></li>
-                  <li><a href="https://www.mysqltutorial.org/getting-started-with-mysql/" target="_blank"> Getting Started with MySQL</a></li>
-              </ol>
-</div>
-
-<div class="main" id="section7"></div>
-
-</div>
-</div>
-
-
-
-<div id="rcorners2">
-
-        <h4 id="title">.Net</h4>
-        <hr class="dashedline">
-        <div class="flex-container">
-        <div class="tooltip" ><img src="assets/accessibility/audits.svg" alt="synatx" width="70" height="70">
-          <p id="heading">ASP.Net</p>
-            <span class="tooltiptext">
-              <h3>DOt Net</h3> 
-              <p >ASP.NET Tutorial - Hello World in 10 minutes</p>
-              <ol>
-                  <li><a href="https://dotnet.microsoft.com/learn/aspnet/hello-world-tutorial/intro?sdk-installed=true" target="_blank"> Microsoft - ASP.Net</a></li>
-          </ol>
-</div>
-
-
-<!-- <h1>The video element</h1>
-
-<video width="99%" height="10%" controls>
-  <source src="E:\Web Developer\The Complete 2020 Web Development Bootcamp\1. Front-End Web Development\1. What You'll Get in This Course.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video> -->
-
-
-</div>
-</div>
-
-<div id="rcorners2">
-
-  <h4 id="title">Own Collection</h4>
-  <hr class="dashedline">
-  <div class="flex-container">
-  <div class="tooltip" ><img src="assets/team-collaboration/version-control/github.svg" alt="synatx" width="70" height="70">
-    <p id="heading">Github</p>
-      <span class="tooltiptext">
-        <h3>Github</h3> 
-        <p >Github Collection</p>
-        <ol>
-            <li><a href="https://github.com/ChaseKnowlden/BarberBookingApp" target="_blank"> BarberBookingApp</a></li>
-            <li><a href="https://github.com/BrentAureli" target="_blank"> Brent Aureli</a></li>
-            <li><a href="https://github.com/kevincarrier/Portfolio" target="_blank"> kevincarrier/Portfolio</a></li>
-            <li><a href="https://github.com/SimCoderYoutube" target="_blank"> SimCoder</a></li>
-            <li><a href="https://github.com/Brackeys" target="_blank"> Brackeys</a></li>
-            <li><a href="https://github.com/mitchtabian/Android-Instagram-Clone/tree/master/app/src/main/res/layout" target="_blank"> mitchtabian/Android-Instagram-Clone</a></li>
-            <li><a href="https://gist.github.com/giansalex/4cd3631e94433bbbd71bf07aedb33a7b" target="_blank"> Torrent Courses List</a></li>
-            <li><a href="https://github.com/florinpop17/app-ideas" target="_blank"> florinpop17/app-ideas</a></li>
-            <li><a href="https://github.com/vanshikaarora" target="_blank"> Vanshika Arora</a></li>
-            <li><a href="https://github.com/WebDevSimplified" target="_blank"> WebDevSimplified</a></li>
-            <li><a href="https://github.com/andreasbm/web-skills" target="_blank"> andreasbm/web-skills</a></li>
-    </ol>
-</div>
-
-
-  <div class="tooltip" ><img src="assets/youtube.svg" alt="synatx" width="70" height="70">
-    <p id="heading">Youtube</p>
-      <span class="tooltiptext">
-        <h3>Youtube</h3> 
-        <p >Youtube Collection</p>
-        <ol>
-            <li><a href="https://www.youtube.com/watch?v=mapLbSKNc6I" target="_blank"> Android Facebook Login with Firebase in - Android Studio</a></li>
-            <li><a href="https://www.youtube.com/watch?v=lQChsNFeAMc" target="_blank"> How to integrate Google sign-in in an android application</a></li>
-            <li><a href="https://www.youtube.com/watch?v=WBqDk7JH30Q" target="_blank"> HP ENVY 6055 Printer UnBoxing and Setup HP Smart App</a></li>
-            <li><a href="" target="_blank"> </a></li>
-            <li><a href="" target="_blank"> </a></li>
-            <li><a href="" target="_blank"> </a></li>
-            <li><a href="" target="_blank"> </a></li>
-            <li><a href="" target="_blank"> </a></li>
-            <li><a href="" target="_blank"> </a></li>
-            <li><a href="" target="_blank"> </a></li>
-            <li><a href="" target="_blank"> </a></li>
-    </ol>
-</div>
-
-
-<!-- <h1>The video element</h1>
-
-<video width="99%" height="10%" controls>
-<source src="E:\Web Developer\The Complete 2020 Web Development Bootcamp\1. Front-End Web Development\1. What You'll Get in This Course.mp4" type="video/mp4">
-Your browser does not support the video tag.
-</video> -->
-
-
-</div>
-</div>
-
-
-
+	for (var i = 0; i < toppings.length; i++) {
+	  var topping = toppings[i];
+	  
+	  var liButton = document.createElement("input");
+	  liButton.setAttribute('id',topping+"!");
+	  liButton.setAttribute('type','button');
+	  liButton.setAttribute('value',topping);
+	  liButton.setAttribute('onclick',"removeItem(this)");
+	  liButton.style.background = "gold";
+	  //liButton.style.fontFamily = "Lucida Console,Courier,monospace";
+	  liButton.style.borderColor = "gold";
+	  liButton.style.padding = "5px";
+	  liButton.style.cursor = "pointer";
+	  liButton.style.font = "normal bold 20px Lucida Console,Courier,monospace"
+	  
+	  var listItem = document.createElement("li");
+	  listItem.setAttribute('id',topping);
+	  listItem.setAttribute('class',"members");
+	  listItem.appendChild(liButton);
+	  
+	  //listItem.appendChild(document.createTextNode(topping));
+	  //listItem.textContent = topping;
+	
+	  ul.appendChild(listItem);
+	}
+   
+	</script>
+	
+	<div style="clear:left"></div>
+	
+	<br>
+	
+	<input type="text" id="candidate"/>
+	<button id="addItemBut" onclick="addItem()">+</button>
+	<button id="removeItemBut" onclick="removeItemButt()">-</button>
+	
+	<br><br><br>
+	<div id="container">
+		<button id="Random1" onclick="Random1Fun()">Choose a member randomly..</button>
+		<br>
+		<label for="lucky" id="luckyText">The lucky member is :</label>
+		<input type="text" id="lucky" name="lucky" readonly>
+	</div>
+	
+	<br><br><br>
+	<table>
+		<tbody>
+			<tr>
+				<td>
+					<button id="RandomSeq" onclick="RandomSeq()">Random sequence..</button>
+				</td>
+				<td>
+					<button id="RandomOR" onclick="RandomORFun()">Owner vs Reviewer</button>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<ol id ="randomSeqList"></ol>
+				</td>
+				<td>
+					<ol id ="randomORList"></ol>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<!--<div id="containerSeq">-->
+	<!--	<button id="RandomSeq" onclick="RandomSeq()">Random sequence..</button>-->
+	<!--	<ol id ="randomSeqList"></ol>-->
+	<!--</div>-->
+	
+	
 </body>
+ 
 </html>
+
+
+<!--<!DOCTYPE html>-->
+<!--<html lang = "en">-->
+<!--    <head>-->
+<!--        <title>Stopwatch</title>-->
+<!--        <script>-->
+<!--            var timeElapsed = 0;-->
+<!--            var timerID = -1;-->
+<!--            function tick() {-->
+<!--                timeElapsed++;-->
+<!--                if(timeElapsed )-->
+<!--                var timeNew = -->
+<!--                `\-->
+<!--			${pad0(timeElapsed[0], 2)}:\-->
+<!--			${pad0(timeElapsed[1], 2)}:\-->
+<!--			${pad0(Math.floor(timeElapsed[2]), 2)}`;-->
+                <!--// document.getElementById("time").innerHTML = timeElapsed;-->
+<!--                document.getElementById("time").innerHTML = timeNew;-->
+<!--            }-->
+
+<!--            function start() {-->
+<!--                if(timerID == -1){-->
+<!--                    timerID = setInterval(tick, 1000);-->
+<!--                }-->
+<!--            }-->
+
+<!--            function stop() {-->
+<!--                if(timerID != -1){-->
+<!--                    clearInterval(timerID)-->
+<!--                    timerID = -1-->
+<!--                }-->
+<!--            }-->
+
+<!--            function reset() {-->
+<!--                stop();-->
+<!--                timeElapsed = -1;-->
+<!--                tick()-->
+<!--            }-->
+<!--        </script>-->
+<!--    </head>-->
+<!--    <body>-->
+<!--        <div>Seconds: <span id="time"></span></div>-->
+<!--        <input type="button" id="startTimer" value="Start Timer" onclick="start();"><br/>-->
+<!--        <input type="button" id="stopTimer" value="Stop Timer"  onclick="stop();"><br/>-->
+<!--        <input type="button" id="resetTimer" value="Reset Timer"  onclick="reset();"><br/>-->
+<!--        <script src= "timer.js"></script>-->
+<!--    </body>-->
+<!--</html>-->
